@@ -6,35 +6,55 @@ library(ggplot2)
 
 # load the csv data into R as a dataframe
 oak2001 <- read.csv("~/snoozycosine/2001OAK.csv")
-windicator <- c(oak2001[,6])
+oak2002 <- read.csv("~/snoozycosine/2002OAK.csv")
+windicator2001 <- c(oak2001[,6])
+windicator2002 <- c(oak2002[,7]) #eww I edited the 2001 csv first :(
 
 # substitute numeric values for the hardcoded wins and loss letters from the data
 loss = 0
 win = 1
-windicator <- as.numeric(gsub(1,loss,windicator))
-windicator <- as.numeric(gsub(2,loss,windicator))
-windicator <- as.numeric(gsub(3,win,windicator))
-windicator <- as.numeric(gsub(4,win,windicator))
+windicator2001 <- as.numeric(gsub(1,loss,windicator2001))
+windicator2001 <- as.numeric(gsub(2,loss,windicator2001))
+windicator2001 <- as.numeric(gsub(3,win,windicator2001))
+windicator2001 <- as.numeric(gsub(4,win,windicator2001))
+
+windicator2002 <- as.numeric(gsub(1,loss,windicator2002))
+windicator2002 <- as.numeric(gsub(2,loss,windicator2002))
+windicator2002 <- as.numeric(gsub(3,win,windicator2002))
+windicator2002 <- as.numeric(gsub(4,win,windicator2002))
 
 ######################################################################################
 ### SUM UP WINS
 
 # this will be the main matrix
 # values will be the total of wins by stretchs of length "rownumber" and column "beginning with game #"
-# for example stretches[20,41] will equal the total wins in a 20 game stretch beginning with game number 41.   
+# for example stretches20012001[20,41] will equal the total wins in a 20 game stretch beginning with game number 41.   
 # this matrix will be upper left triangular:
-# as all values where (stretches > games remaining) should be NA
+# as all values where (stretches2001 > games remaining) should be NA
 
-stretches = matrix(nrow=length(windicator), ncol=length(windicator)) # normally 162 by 162
+stretches2001 = matrix(nrow=length(windicator2001), ncol=length(windicator2001)) # normally 162 by 162
+stretches2002 = matrix(nrow=length(windicator2001), ncol=length(windicator2001)) # normally 162 by 162
 
 # b = beginning with game number
 # s = stretch length
 b <- 1
-while (b <= length(windicator)) {
+while (b <= length(windicator2001)) {
   s <- 1
-  while (s <= (length(windicator)-b+1)) {
-    stretches[s,b] <- sum(windicator[b:(b+s-1)])
-    #sprintf("Stretch of %f with %f wins",s,stretches[s,b])
+  while (s <= (length(windicator2001)-b+1)) {
+    stretches2001[s,b] <- sum(windicator2001[b:(b+s-1)])
+    #sprintf("Stretch of %f with %f wins",s,stretches2001[s,b])
+    #print("ding")
+    s <- s+1
+  }
+  b <- b+1
+}
+
+b <- 1
+while (b <= length(windicator2002)) {
+  s <- 1
+  while (s <= (length(windicator2002)-b+1)) {
+    stretches2002[s,b] <- sum(windicator2002[b:(b+s-1)])
+    #sprintf("Stretch of %f with %f wins",s,stretches2001[s,b])
     #print("ding")
     s <- s+1
   }
@@ -44,16 +64,26 @@ while (b <= length(windicator)) {
 ######################################################################################
 ### FIND COOL STUFF
 
-bestStretch <- apply(stretches,1,max, na.rm = TRUE) # most wins in a [position] game stretch
-whenBest <- apply(stretches,1,which.max) # this only gets the first time such a stretch occured
+bestStretch2001 <- apply(stretches2001,1,max, na.rm = TRUE) # most wins in a [position] game stretch
+bestStretch2002 <- apply(stretches2002,1,max, na.rm = TRUE) # most wins in a [position] game stretch
+#whenBest <- apply(stretches2001,1,which.max) # this only gets the first time such a stretch occured
 
 # find the best winning percentage per length
-bestStretchPct <- vector(mode="double",length = length(bestStretch))
+bestStretch2001Pct <- vector(mode="double",length = length(bestStretch2001))
 i <- 1
-while(i<=length(bestStretch)){
-  bestStretchPct[i] <- (bestStretch[i]*1.0)/i
+while(i<=length(bestStretch2001)){
+  bestStretch2001Pct[i] <- (bestStretch2001[i]*1.0)/i
+  i <- i+1
+}
+
+bestStretch2002Pct <- vector(mode="double",length = length(bestStretch2002))
+i <- 1
+while(i<=length(bestStretch2002)){
+  bestStretch2002Pct[i] <- (bestStretch2002[i]*1.0)/i
   i <- i+1
 }
 
 x <- c(1:162)
-plot(x,bestStretchPct)
+plot(x,bestStretch2001Pct)
+plot(x,bestStretch2002Pct)
+#plot(bestStretch2001Pct,bestStretch2002Pct) # what is this even
