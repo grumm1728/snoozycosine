@@ -8,7 +8,7 @@ library(ggplot2)
 oak2001 <- read.csv("~/snoozycosine/2001OAK.csv")
 oak2002 <- read.csv("~/snoozycosine/2002OAK.csv")
 windicator2001 <- c(oak2001[,6])
-windicator2002 <- c(oak2002[,7]) #eww I edited the 2001 csv first :(
+windicator2002 <- c(oak2002[,7]) #eww I edited the 2001 csv first :( so the column numbers are different
 
 # substitute numeric values for the hardcoded wins and loss letters from the data
 loss = 0
