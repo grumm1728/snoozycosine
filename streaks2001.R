@@ -28,7 +28,7 @@ windicator2002 <- as.numeric(gsub(4,win,windicator2002))
 
 # this will be the main matrix
 # values will be the total of wins by stretchs of length "rownumber" and column "beginning with game #"
-# for example stretches20012001[20,41] will equal the total wins in a 20 game stretch beginning with game number 41.   
+# for example stretches2001[20,41] will equal the total wins in a 20 game stretch beginning with game number 41.   
 # this matrix will be upper left triangular:
 # as all values where (stretches2001 > games remaining) should be NA
 
@@ -41,7 +41,9 @@ b <- 1
 while (b <= length(windicator2001)) {
   s <- 1
   while (s <= (length(windicator2001)-b+1)) {
-    stretches2001[s,b] <- sum(windicator2001[b:(b+s-1)])
+    winT <- sum(windicator2001[b:(b+s-1)])
+    stretches2001[s,b] <- winT
+    
     #sprintf("Stretch of %f with %f wins",s,stretches2001[s,b])
     #print("ding")
     s <- s+1
@@ -67,6 +69,32 @@ while (b <= length(windicator2002)) {
 bestStretch2001 <- apply(stretches2001,1,max, na.rm = TRUE) # most wins in a [position] game stretch
 bestStretch2002 <- apply(stretches2002,1,max, na.rm = TRUE) # most wins in a [position] game stretch
 #whenBest <- apply(stretches2001,1,which.max) # this only gets the first time such a stretch occured
+
+
+###########  Plots of wins in a stretch vs. win% in a stretch
+allStretches2001 <- c(rep(1,162))
+i <- 1
+while (i<=161) {
+  i <- i+1
+  allStretches2001 <- c(allStretches2001,c(rep(i,162)))
+}
+allWins2001 <- as.vector(t(stretches2001))
+plot(allStretches2001,allWins2001)
+plot(allWins2001,allWins2001/allStretches2001)
+plot(allStretches2001,allWins2001/allStretches2001)
+
+allStretches2002 <- c(rep(1,162))
+i <- 1
+while (i<=161) {
+  i <- i+1
+  allStretches2002 <- c(allStretches2002,c(rep(i,162)))
+}
+allWins2002 <- as.vector(t(stretches2002))
+plot(allStretches2002,allWins2002)
+plot(allWins2002,allWins2002/allStretches2002)
+plot(allStretches2002,allWins2002/allStretches2002)
+########################################################
+
 
 # find the best winning percentage per length
 bestStretch2001Pct <- vector(mode="double",length = length(bestStretch2001))
